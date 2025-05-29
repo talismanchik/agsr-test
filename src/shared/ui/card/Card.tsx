@@ -1,12 +1,12 @@
 'use client';
 
-import { Card as MuiCard, CardProps as MuiCardProps, CardContent, CardHeader, CardActions } from '@mui/material';
+import { Card as MuiCard, CardProps as MuiCardProps, CardContent, CardHeader, CardActions, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-export interface CardProps extends MuiCardProps {
-  title?: string;
+type Props = MuiCardProps & {
+  title?: React.ReactNode;
   actions?: React.ReactNode;
-}
+};
 
 const StyledCard = styled(MuiCard)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
@@ -17,10 +17,14 @@ const StyledCard = styled(MuiCard)(({ theme }) => ({
   },
 }));
 
-export const Card = ({ title, children, actions, ...props }: CardProps) => {
+export const Card: React.FC<Props> = ({ title, children, actions, ...props }) => {
   return (
     <StyledCard {...props}>
-      {title && <CardHeader title={title} />}
+      {title && (
+        <Typography variant="h6" component="div" gutterBottom>
+          {title}
+        </Typography>
+      )}
       <CardContent>{children}</CardContent>
       {actions && <CardActions>{actions}</CardActions>}
     </StyledCard>

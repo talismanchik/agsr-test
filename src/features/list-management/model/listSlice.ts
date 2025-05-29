@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { TaskList, CreateListDto, UpdateListDto } from '@/shared/types/list';
+import { TaskList } from '@/shared/types/list';
 
-interface ListState {
+type ListState = {
   lists: TaskList[];
   isLoading: boolean;
   error: string | null;
-}
+};
 
 const initialState: ListState = {
   lists: [
@@ -25,7 +25,6 @@ const listSlice = createSlice({
   name: 'lists',
   initialState,
   reducers: {
-    // Загрузка списков
     fetchListsStart: (state) => {
       state.isLoading = true;
       state.error = null;
@@ -39,7 +38,6 @@ const listSlice = createSlice({
       state.error = action.payload;
     },
 
-    // Создание списка
     createListStart: (state) => {
       state.isLoading = true;
       state.error = null;
@@ -53,7 +51,6 @@ const listSlice = createSlice({
       state.error = action.payload;
     },
 
-    // Обновление списка
     updateListStart: (state) => {
       state.isLoading = true;
       state.error = null;
@@ -70,7 +67,6 @@ const listSlice = createSlice({
       state.error = action.payload;
     },
 
-    // Удаление списка
     deleteListStart: (state) => {
       state.isLoading = true;
       state.error = null;
@@ -84,7 +80,6 @@ const listSlice = createSlice({
       state.error = action.payload;
     },
 
-    // Обновление количества задач в списке
     updateListTaskCount: (state, action: PayloadAction<{ listId: string; count: number }>) => {
       const list = state.lists.find((l) => l.id === action.payload.listId);
       if (list) {

@@ -20,7 +20,6 @@ export default function LoginPage() {
 
   const handleChange = (name: string, value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
-    // Очищаем ошибку поля при изменении
     if (formErrors[name]) {
       setFormErrors((prev) => ({ ...prev, [name]: '' }));
     }
@@ -40,15 +39,13 @@ export default function LoginPage() {
     return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
 
     dispatch(loginStart());
     try {
-      // Имитация запроса к API
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
+      // Проверяем тестовые учетные данные
       if (
         formData.email === TEST_CREDENTIALS.email &&
         formData.password === TEST_CREDENTIALS.password
@@ -58,9 +55,31 @@ export default function LoginPage() {
           localStorage.setItem('isLoggedIn', 'true');
         }
         router.push('/lists');
-      } else {
-        throw new Error('Неверный email или пароль');
+        return;
       }
+
+      // Проверяем сохраненные данные пользователя
+      if (typeof window !== 'undefined') {
+        const savedUserData = localStorage.getItem('userData');
+        if (savedUserData) {
+          const { email, password } = JSON.parse(savedUserData);
+          if (formData.email === email && formData.password === password) {
+            // Создаем объект пользователя для авторизации
+            const user = {
+              id: crypto.randomUUID(), // В реальном приложении ID был бы сохранен
+              name: email.split('@')[0], // Временное решение для имени
+              email: email,
+            };
+            dispatch(loginSuccess(user));
+            localStorage.setItem('isLoggedIn', 'true');
+            router.push('/lists');
+            return;
+          }
+        }
+      }
+
+      // Если ни тестовые, ни сохраненные данные не подошли
+      throw new Error('Неверный email или пароль');
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Произошла ошибка при входе';
       dispatch(loginFailure(errorMessage));
@@ -90,7 +109,7 @@ export default function LoginPage() {
     <Container maxWidth="sm">
       <Box
         sx={{
-          minHeight: '100vh',
+          minHeight: 'calc(100vh - var(--header-total-height))',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -131,14 +150,6 @@ export default function LoginPage() {
           <Link href="/register" underline="hover">
             Зарегистрироваться
           </Link>
-        </Typography>
-
-        <Typography variant="body2" color="text.secondary" align="center">
-          Для тестирования используйте:
-          <br />
-          Email: {TEST_CREDENTIALS.email}
-          <br />
-          Пароль: {TEST_CREDENTIALS.password}
         </Typography>
       </Box>
     </Container>

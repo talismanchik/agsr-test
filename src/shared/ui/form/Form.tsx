@@ -2,6 +2,23 @@
 
 import { Box, TextField, TextFieldProps } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { MenuItem } from '@mui/material';
+
+type Field = {
+  name: string;
+  label: string;
+  type?: string;
+  required?: boolean;
+  select?: boolean;
+  children?: React.ReactNode;
+};
+
+type Props = {
+  fields: Field[];
+  values: Record<string, string>;
+  onChange: (name: string, value: string) => void;
+  errors?: Record<string, string>;
+};
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
   '& .MuiOutlinedInput-root': {
@@ -12,37 +29,27 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
   },
 }));
 
-export interface FormFieldProps extends Omit<TextFieldProps, 'variant'> {
-  name: string;
-  label: string;
-  type?: string;
-  required?: boolean;
-}
-
-export interface FormProps {
-  fields: FormFieldProps[];
-  values: Record<string, any>;
-  onChange: (name: string, value: any) => void;
-  errors?: Record<string, string>;
-}
-
-export const FormField = ({ name, label, type = 'text', required = false, ...props }: FormFieldProps) => {
+const FormField: React.FC<Field & { 
+  value: string;
+  error?: boolean;
+  helperText?: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}> = ({ select, children, ...props }) => {
   return (
     <StyledTextField
-      fullWidth
       variant="outlined"
-      name={name}
-      label={label}
-      type={type}
-      required={required}
+      fullWidth
+      select={select}
       {...props}
-    />
+    >
+      {select && children}
+    </StyledTextField>
   );
 };
 
-export const Form = ({ fields, values, onChange, errors = {} }: FormProps) => {
+export const Form: React.FC<Props> = ({ fields, values, onChange, errors = {} }) => {
   return (
-    <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
       {fields.map((field) => (
         <FormField
           key={field.name}

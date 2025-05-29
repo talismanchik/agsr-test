@@ -17,7 +17,7 @@ export default function WelcomePage() {
     <Container maxWidth="sm">
       <Box
         sx={{
-          minHeight: '100vh',
+          minHeight: 'calc(100vh - var(--header-total-height))',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',

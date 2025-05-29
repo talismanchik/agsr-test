@@ -1,6 +1,9 @@
 :root {
   --background: #ebebeb;
   --foreground: #171717;
+  --header-height: 68px;
+  --header-margin-bottom: 24px;
+  --header-total-height: calc(var(--header-height) + var(--header-margin-bottom));
 }
 
 html,

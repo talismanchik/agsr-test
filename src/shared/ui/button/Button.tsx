@@ -3,9 +3,7 @@
 import { Button as MuiButton, ButtonProps as MuiButtonProps } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-export interface ButtonProps extends MuiButtonProps {
-  fullWidth?: boolean;
-}
+type Props = MuiButtonProps;
 
 const StyledButton = styled(MuiButton)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
@@ -20,6 +18,6 @@ const StyledButton = styled(MuiButton)(({ theme }) => ({
   },
 }));
 
-export const Button = ({ children, ...props }: ButtonProps) => {
+export const Button = ({ children, ...props }: Props) => {
   return <StyledButton {...props}>{children}</StyledButton>;
 }; 

@@ -1,20 +1,20 @@
-export interface User {
+export type User = {
   id: string;
+  name: string;
   email: string;
-  name?: string;
-}
+};
 
-export interface AuthState {
+export type AuthState = {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-}
+};
 
-export interface LoginDto {
+export type LoginDto = {
   email: string;
   password: string;
-}
+};
 
 export const TEST_USER: User = {
   id: '1',

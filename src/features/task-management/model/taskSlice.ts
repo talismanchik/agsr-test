@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Task, CreateTaskDto, UpdateTaskDto } from '@/shared/types/task';
+import { Task } from '@/shared/types/task';
 
-interface TaskState {
+type TaskState = {
   tasks: Task[];
   isLoading: boolean;
   error: string | null;
-}
+};
 
 const initialState: TaskState = {
   tasks: [],
@@ -17,7 +17,6 @@ const taskSlice = createSlice({
   name: 'tasks',
   initialState,
   reducers: {
-    // Загрузка задач
     fetchTasksStart: (state) => {
       state.isLoading = true;
       state.error = null;
@@ -31,7 +30,6 @@ const taskSlice = createSlice({
       state.error = action.payload;
     },
 
-    // Создание задачи
     createTaskStart: (state) => {
       state.isLoading = true;
       state.error = null;
@@ -45,7 +43,6 @@ const taskSlice = createSlice({
       state.error = action.payload;
     },
 
-    // Обновление задачи
     updateTaskStart: (state) => {
       state.isLoading = true;
       state.error = null;
@@ -62,7 +59,6 @@ const taskSlice = createSlice({
       state.error = action.payload;
     },
 
-    // Удаление задачи
     deleteTaskStart: (state) => {
       state.isLoading = true;
       state.error = null;

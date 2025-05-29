@@ -29,8 +29,8 @@ const Header: React.FC = () => {
       padding: '16px 32px',
       background: '#fff',
       boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-      marginBottom: 24,
-      minHeight: 64,
+      marginBottom: 'var(--header-margin-bottom)',
+      minHeight: 'var(--header-height)',
       zIndex: 100,
     }}>
       <Link href="/lists" style={{ textDecoration: 'none', color: '#1976d2', fontWeight: 700, fontSize: 24 }}>

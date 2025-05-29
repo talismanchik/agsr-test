@@ -1,15 +1,15 @@
-export interface TaskList {
+export type TaskList = {
   id: string;
   title: string;
   createdAt: string;
   updatedAt: string;
   taskCount: number;
-}
+};
 
-export interface CreateListDto {
+export type CreateListDto = {
   title: string;
-}
+};
 
-export interface UpdateListDto {
-  title?: string;
-} 
+export type UpdateListDto = {
+  title: string;
+}; 

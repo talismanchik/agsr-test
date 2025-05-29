@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Box, Container, Typography, Alert, Link } from '@mui/material';
+import { Box, Container, Typography, Alert, Link, Button } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '@/shared/config/store';
 import { loginSuccess } from '@/features/auth/model/authSlice';
 import { Form } from '@/shared/ui';
@@ -22,7 +22,6 @@ export default function RegisterPage() {
 
   const handleChange = (name: string, value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
-    // Очищаем ошибку поля при изменении
     if (formErrors[name]) {
       setFormErrors((prev) => ({ ...prev, [name]: '' }));
     }
@@ -55,16 +54,24 @@ export default function RegisterPage() {
     if (!validateForm()) return;
 
     try {
-      // Имитация запроса к API
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // В реальном приложении здесь был бы запрос к API для регистрации
-      // Для демонстрации просто авторизуем пользователя
-      dispatch(loginSuccess({
-        ...TEST_USER,
+      const newUser = {
+        id: crypto.randomUUID(), 
         name: formData.name,
         email: formData.email,
-      }));
+      };
+
+      dispatch(loginSuccess(newUser));
+      
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userData', JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }));
+      }
+      
       router.push('/lists');
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Произошла ошибка при регистрации';
@@ -103,7 +110,7 @@ export default function RegisterPage() {
     <Container maxWidth="sm">
       <Box
         sx={{
-          minHeight: '100vh',
+          minHeight: 'calc(100vh - var(--header-total-height))',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -121,13 +128,21 @@ export default function RegisterPage() {
           </Alert>
         )}
 
-        <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
+        <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Form
             fields={formFields}
             values={formData}
             onChange={handleChange}
             errors={formErrors}
           />
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            sx={{ mt: 2 }}
+          >
+            Зарегистрироваться
+          </Button>
         </Box>
 
         <Typography variant="body2" color="text.secondary" align="center">
