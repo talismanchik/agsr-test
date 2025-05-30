@@ -1,6 +1,6 @@
-import { Box } from '@mui/material';
-import { Button, Modal, Form } from '@/shared/ui';
-import { useState } from 'react';
+import { BaseModal } from '@/shared/ui';
+import { Form } from '@/shared/ui';
+import { useForm } from '@/shared/lib/hooks/useForm';
 
 interface CreateListModalProps {
   open: boolean;
@@ -9,55 +9,59 @@ interface CreateListModalProps {
   isLoading: boolean;
 }
 
+type FormValues = {
+  title: string;
+};
+
+const initialValues: FormValues = {
+  title: '',
+};
+
+const validationRules = {
+  title: (value: string) => !value ? 'Название обязательно' : undefined,
+};
+
 export const CreateListModal = ({ open, onClose, onSubmit, isLoading }: CreateListModalProps) => {
-  const [formData, setFormData] = useState({ title: '' });
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const {
+    values,
+    errors,
+    handleChange: formHandleChange,
+    handleSubmit,
+    reset,
+  } = useForm<FormValues>({
+    initialValues,
+    validationRules,
+    onSubmit: (data) => {
+      onSubmit(data.title);
+      reset();
+      onClose();
+    },
+  });
 
   const handleChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (formErrors[name]) {
-      setFormErrors((prev) => ({ ...prev, [name]: '' }));
-    }
-  };
-
-  const validateForm = () => {
-    const errors: Record<string, string> = {};
-    if (!formData.title) errors.title = 'Название обязательно';
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-    onSubmit(formData.title);
-    setFormData({ title: '' });
-    setFormErrors({});
+    formHandleChange(name as keyof FormValues, value);
   };
 
   return (
-    <Modal
+    <BaseModal
       open={open}
-      onClose={onClose}
+      onClose={() => {
+        reset();
+        onClose();
+      }}
       title="Создать новый список"
-      actions={null}
+      onSubmit={handleSubmit}
+      submitText="Создать"
+      isLoading={isLoading}
     >
       <Form
         fields={[
           { name: 'title', label: 'Название', required: true },
         ]}
-        values={formData}
+        values={values}
         onChange={handleChange}
-        errors={formErrors}
+        errors={errors}
       />
-      <Box mt={2} display="flex" gap={2}>
-        <Button variant="contained" onClick={handleSubmit} disabled={isLoading}>
-          Создать
-        </Button>
-        <Button variant="outlined" onClick={onClose}>
-          Отмена
-        </Button>
-      </Box>
-    </Modal>
+    </BaseModal>
   );
 }; 

@@ -6,7 +6,6 @@ import { Box, Container, Typography, Alert, Link, Button } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '@/shared/config/store';
 import { loginSuccess } from '@/features/auth/model/authSlice';
 import { Form } from '@/shared/ui';
-import { TEST_USER } from '@/shared/types/auth';
 
 export default function RegisterPage() {
   const router = useRouter();

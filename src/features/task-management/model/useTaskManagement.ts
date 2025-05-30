@@ -1,7 +1,7 @@
 import { useCallback, useState, useEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '@/shared/config/store';
 import { createTaskStart, createTaskSuccess, deleteTaskStart, deleteTaskSuccess, updateTaskStart, updateTaskSuccess } from './taskSlice';
-import { Task, CreateTaskDto, UpdateTaskDto } from '@/shared/types/task';
+import {  CreateTaskDto, UpdateTaskDto } from '@/shared/types/task';
 import { v4 as uuidv4 } from 'uuid';
 
 export const useTaskManagement = (listId: string) => {

@@ -10,6 +10,8 @@ type Field = {
   required?: boolean;
   select?: boolean;
   children?: React.ReactNode;
+  InputLabelProps?: TextFieldProps['InputLabelProps'];
+  InputProps?: TextFieldProps['InputProps'];
 };
 
 type Props = {
@@ -33,12 +35,14 @@ const FormField: React.FC<Field & {
   error?: boolean;
   helperText?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}> = ({ select, children, ...props }) => {
+}> = ({ select, children, InputLabelProps, InputProps, ...props }) => {
   return (
     <StyledTextField
       variant="outlined"
       fullWidth
       select={select}
+      InputLabelProps={InputLabelProps}
+      InputProps={InputProps}
       {...props}
     >
       {select && children}

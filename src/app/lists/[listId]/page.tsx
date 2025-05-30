@@ -5,8 +5,7 @@ import { useAppSelector } from '@/shared/config/store';
 import { Container, Box, Typography, IconButton } from '@mui/material';
 import { Button } from '@/shared/ui';
 import { TaskCard } from '@/entities/task/ui/TaskCard';
-import { CreateTaskModal } from '@/features/task-management/ui/CreateTaskModal';
-import { TaskDetailsModal } from '@/features/task-management/ui/TaskDetailsModal';
+import { TaskModal } from '@/features/task-management/ui/TaskModal';
 import { useTaskManagement } from '@/features/task-management/model/useTaskManagement';
 import { useState } from 'react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -15,26 +14,38 @@ export default function ListTasksPage() {
   const { listId } = useParams<{ listId: string }>();
   const router = useRouter();
   const list = useAppSelector((state) => state.lists.lists.find((l) => l.id === listId));
-  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<string | null>(null);
 
   const {
     tasks,
     isLoading,
-    selectedTask,
-    timer,
     createTask,
     updateTask,
     deleteTask,
-    selectTask,
   } = useTaskManagement(listId);
 
-  const formatTimeLeft = (seconds: number | null) => {
-    if (seconds === null) return undefined;
-    if (seconds <= 0) return 'Просрочено';
-    const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
-    const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
-    const s = (seconds % 60).toString().padStart(2, '0');
-    return `${h}:${m}:${s}`;
+  const handleTaskClick = (taskId: string) => {
+    setSelectedTask(taskId);
+    setModalOpen(true);
+  };
+
+  const handleCreateClick = () => {
+    setSelectedTask(null);
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedTask(null);
+  };
+
+  const handleSubmit = (data: any) => {
+    if (selectedTask) {
+      updateTask(selectedTask, data);
+    } else {
+      createTask(data);
+    }
   };
 
   if (!list) {
@@ -48,16 +59,20 @@ export default function ListTasksPage() {
     );
   }
 
+  const task = selectedTask ? tasks.find(t => t.id === selectedTask) || null : null;
+
   return (
     <Container maxWidth="md" sx={{ py: 8 }}>
-      <Box display="flex" alignItems="center" gap={2} mb={4}>
-        <IconButton onClick={() => router.push('/lists')}>
-          <ArrowBackIcon />
-        </IconButton>
-        <Typography variant="h4" component="h1">
-          {list.title}
-        </Typography>
-        <Button variant="contained" onClick={() => setCreateModalOpen(true)}>
+      <Box display="flex" alignItems="center" justifyContent="space-between" mb={4}>
+        <Box display="flex" alignItems="center" gap={2}>
+          <IconButton onClick={() => router.push('/lists')}>
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography variant="h4" component="h1">
+            {list.title}
+          </Typography>
+        </Box>
+        <Button variant="contained" onClick={handleCreateClick}>
           Создать задачу
         </Button>
       </Box>
@@ -72,27 +87,19 @@ export default function ListTasksPage() {
             <TaskCard
               key={task.id}
               task={task}
-              onClick={selectTask}
+              onClick={handleTaskClick}
             />
           ))
         )}
       </Box>
 
-      <CreateTaskModal
-        open={createModalOpen}
-        onClose={() => setCreateModalOpen(false)}
-        onSubmit={createTask}
-        isLoading={isLoading}
-      />
-
-      <TaskDetailsModal
-        task={selectedTask}
-        open={!!selectedTask}
-        onClose={() => selectTask(null)}
-        onEdit={updateTask}
+      <TaskModal
+        task={task}
+        open={modalOpen}
+        onClose={handleCloseModal}
+        onSubmit={handleSubmit}
         onDelete={deleteTask}
         isLoading={isLoading}
-        timeLeft={formatTimeLeft(timer)}
       />
     </Container>
   );
