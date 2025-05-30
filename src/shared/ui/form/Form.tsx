@@ -2,7 +2,6 @@
 
 import { Box, TextField, TextFieldProps } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { MenuItem } from '@mui/material';
 
 type Field = {
   name: string;
@@ -49,7 +48,7 @@ const FormField: React.FC<Field & {
 
 export const Form: React.FC<Props> = ({ fields, values, onChange, errors = {} }) => {
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, paddingTop: 1 }}>
       {fields.map((field) => (
         <FormField
           key={field.name}
